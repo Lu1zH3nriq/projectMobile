@@ -12,57 +12,60 @@ export default function Login(props) {
 
     const [loading, setLoading] = useState(false);
 
-    // const loginUsuario = async () => {
-    //     setLoading(true);
-    //     try {
-    //         const queryUser = await getDocs(collection(db, 'Usuários'));
-    //         let user = {};
-    //         queryUser.forEach((doc) => {
-    //             const data = doc.data();
-    //             if (data.email === email && data.pass === senha) {
-    //                 user = data;
-    //             }
-    //         });
-    //         if (Object.keys(user).length !== 0) { 
-    //             props.navigation.navigate('Home', { user: user });
-    //         } else {
-    //             Alert.alert('Erro', 'Usuário não encontrado! Email ou senha inválidos.');
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
-    //     }
-    // };
-
-    // const handleLogin = () => {
-
-    //     if (email.trim() === '' || senha.trim() === '') {
-    //         Alert.alert('Atenção!', 'Por favor, preencha todos os campos.');
-    //     } else {
-    //         loginUsuario();
-    //     }
-    // };
-
     const loginUsuario = async () => {
-        const user = {
-            nome: 'Sandro',
-            email: 'asdasda@mail.com',
-            pass: '***',
-            tipo: 2,
-        };
         setLoading(true);
-
-        setTimeout(() => {
+        try {
+            const queryUser = await getDocs(collection(db, 'Usuários'));
+            let user = {};
+            queryUser.forEach((doc) => {
+                const data = doc.data();
+                if (data.email === email && data.pass === senha) {
+                    user = { ...data, id: doc.id };
+                }
+            });
+            if (Object.keys(user).length !== 0) { 
+                props.navigation.navigate('Home', { user: user });
+            } else {
+                Alert.alert('Erro', 'Usuário não encontrado! Email ou senha inválidos.');
+            }
+        } catch (error) {
+            console.error(error);
+            Alert.alert('Erro', 'Ocorreu um erro ao tentar fazer login.');
+        }
+        finally {
             setLoading(false);
-
-            
-            props.navigation.navigate('Home', { user: user });
-        }, 4000);
+        }
     };
 
     const handleLogin = () => {
-        loginUsuario();
+
+        if (email.trim() === '' || senha.trim() === '') {
+            Alert.alert('Atenção!', 'Por favor, preencha todos os campos.');
+        } else {
+            loginUsuario();
+        }
     };
+
+    // const loginUsuario = async () => {
+    //     const user = {
+    //         nome: 'Sandro',
+    //         email: 'prof@mail.com',
+    //         pass: '***',
+    //         tipo: 2,
+    //     };
+    //     setLoading(true);
+
+    //     setTimeout(() => {
+    //         setLoading(false);
+
+            
+    //         props.navigation.navigate('Home', { user: user });
+    //     }, 4000);
+    // };
+
+    // const handleLogin = () => {
+    //     loginUsuario();
+    // };
 
     return (
         <View style={styles.container}>

@@ -34,23 +34,20 @@ export default function Home(props) {
             ) : (
                 user.tipo === 1 ? (
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user });}}>
                             <Text style={styles.buttonText}>P.I. Atual</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user, apresentados: true });}}>
                             <Text style={styles.buttonText}>P.I.'s Apresentados</Text>
                         </TouchableOpacity>
                     </View>
                 ) : (
                     <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user});}} >
                             <Text style={styles.buttonText}>Avaliar P.I</Text>
                         </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
+                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user, avaliados: true });}} >
                             <Text style={styles.buttonText}>P.I's Avaliados</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button}>
-                            <Text style={styles.buttonText}>Cursos Participantes</Text>
                         </TouchableOpacity>
                     </View>
                 )
