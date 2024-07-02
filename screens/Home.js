@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 
 export default function Home(props) {
     const { user } = props.route.params;
+    
 
     const userTypes = {
         0: 'Admin',
@@ -18,40 +19,38 @@ export default function Home(props) {
             </View>
             {user?.tipo === 0 ? (
                 <View style={styles.buttonContainer}>
-                    <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Cursos', { user: user });}}>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Cursos', { user: user }); }}>
                         <Text style={styles.buttonText}>Cursos</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Alunos', { user: user });}} >
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Alunos', { user: user }); }}>
                         <Text style={styles.buttonText}>Alunos</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user });}}>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Projetos', { user: user }); }}>
                         <Text style={styles.buttonText}>Projetos</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Usuarios', { user: user });}}>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Usuarios', { user: user }); }}>
                         <Text style={styles.buttonText}>Usuários</Text>
                     </TouchableOpacity>
                 </View>
-            ) : (
-                user.tipo === 1 ? (
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user });}}>
-                            <Text style={styles.buttonText}>P.I. Atual</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user, apresentados: true });}}>
-                            <Text style={styles.buttonText}>P.I.'s Apresentados</Text>
-                        </TouchableOpacity>
-                    </View>
-                ) : (
-                    <View style={styles.buttonContainer}>
-                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user});}} >
-                            <Text style={styles.buttonText}>Avaliar P.I</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.button} onPress={()=>{ props.navigation.navigate('Projetos', { user: user, avaliados: true });}} >
-                            <Text style={styles.buttonText}>P.I's Avaliados</Text>
-                        </TouchableOpacity>
-                    </View>
-                )
-            )}
+            ) : user?.tipo === 1 ? (
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Projetos', { user: user }); }}>
+                        <Text style={styles.buttonText}>P.I. Atual</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Projetos', { user: user, apresentados: true }); }}>
+                        <Text style={styles.buttonText}>P.I.'s Apresentados</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : user?.tipo === 2 ? (
+                <View style={styles.buttonContainer}>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Projetos', { user: user, avaliar: true }); }}>
+                        <Text style={styles.buttonText}>Avaliar P.I</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.button} onPress={() => { props.navigation.navigate('Projetos', { user: user, avaliados: true }); }}>
+                        <Text style={styles.buttonText}>P.I's Avaliados</Text>
+                    </TouchableOpacity>
+                </View>
+            ) : null}
         </View>
     );
 }

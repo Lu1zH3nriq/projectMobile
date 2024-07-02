@@ -14,6 +14,7 @@ export default function CadastrarAlunos(props) {
         matricula: '',
         periodoAtual: '',
         periodosCursado: '',
+        email: '',
     }
 
     const editAluno = {
@@ -22,6 +23,7 @@ export default function CadastrarAlunos(props) {
         matricula: aluno ? aluno.matricula : '',
         periodoAtual: aluno ? aluno.periodoAtual : '',
         periodosCursado: aluno ? aluno.periodosCursado : '',
+        email: aluno ? aluno.email : '',
     }
 
     const [_aluno, setAluno] = useState(aluno ? editAluno : initialState);
@@ -48,7 +50,7 @@ export default function CadastrarAlunos(props) {
     };
 
     const editarAluno = async () => {
-        if (_aluno.nome && _aluno.cursoGraduacao && _aluno.matricula && _aluno.periodoAtual && _aluno.periodosCursado) {
+        if (_aluno.nome && _aluno.cursoGraduacao && _aluno.matricula && _aluno.periodoAtual && _aluno.periodosCursado && _aluno.email) {
             try {
                 await setDoc(doc(db, 'Alunos', idAluno), _aluno);
                 Alert.alert('Sucesso', 'Aluno editado com sucesso!');
@@ -101,6 +103,12 @@ export default function CadastrarAlunos(props) {
                 value={_aluno.periodosCursado.toString()}
                 keyboardType="numeric"
                 onChangeText={(text) => handleChange('periodosCursado', text)}
+            />
+            <TextInput
+                style={styles.input}
+                placeholder="Email"
+                value={_aluno.email}
+                onChangeText={(text) => handleChange('email', text)}
             />
             <Button title={aluno ? 'Salvar' : 'Cadastrar'} onPress={() => {
                 if (aluno) {
