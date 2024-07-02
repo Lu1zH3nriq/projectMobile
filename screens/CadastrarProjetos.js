@@ -78,6 +78,7 @@ export default function CadastrarProjeto(props) {
             const projetosRef = collection(db, 'Projetos Integradores');
             const projetosSnapshot = await getDocs(projetosRef);
             const projetos = projetosSnapshot.docs.map(doc => doc.data());
+
             props.navigation.navigate('Projetos', { newListProjetos: projetos });
         } catch (error) {
             console.error('Erro ao cadastrar projeto:', error);
@@ -100,9 +101,13 @@ export default function CadastrarProjeto(props) {
             Alert.alert('Sucesso', 'Projeto editado com sucesso!');
             setState(initialState);
 
+            
             const projetosRef = collection(db, 'Projetos Integradores');
             const projetosSnapshot = await getDocs(projetosRef);
             const projetos = projetosSnapshot.docs.map(doc => doc.data());
+
+            console.log(projetos);
+
             props.navigation.navigate('Projetos', { newListProjetos: projetos });
         } catch (error) {
             console.error('Erro ao editar projeto:', error);

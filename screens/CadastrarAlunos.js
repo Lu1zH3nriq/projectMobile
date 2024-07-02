@@ -6,9 +6,7 @@ import { getFirestore, collection, addDoc, getDocs, setDoc, doc } from 'firebase
 const db = getFirestore(appFirebase);
 
 export default function CadastrarAlunos(props) {
-    const { aluno } = props?.route?.params || {};
-    const { idAluno } = props?.route?.params || {};
-
+    const { aluno, idAluno } = props?.route?.params || {};
 
     const initialState = {
         nome: '',
@@ -29,25 +27,16 @@ export default function CadastrarAlunos(props) {
     const [_aluno, setAluno] = useState(aluno ? editAluno : initialState);
 
     const handleChange = (name, value) => {
-        // if (name === 'periodosCursado') {
-        //     value = parseInt(value, 10);
-        // }
         setAluno({ ..._aluno, [name]: value });
     };
 
     const handleSubmit = async () => {
-
-        if (!_aluno || !_aluno.nome || !_aluno.periodoAtual || !_aluno.periodosCursado) {
-            Alert.alert('Erro', 'Por favor, preencha todos os campos.');
-            return;
-        }
-
         try {
             await addDoc(collection(db, 'Alunos'), _aluno);
             const alunosRef = collection(db, 'Alunos');
             const alunosSnapshot = await getDocs(alunosRef);
             const alunosData = alunosSnapshot.docs.map((doc, index) => ({
-                key: `${doc.id}-${index}`,
+                id: doc.id,
                 ...doc.data()
             }));
             props.navigation.navigate('Alunos', { newListAlunos: alunosData });
@@ -56,32 +45,21 @@ export default function CadastrarAlunos(props) {
             console.error('Erro ao cadastrar aluno:', error);
             Alert.alert('Erro', 'Ocorreu um erro ao cadastrar o aluno. Por favor, tente novamente.');
         }
-
-
     };
-
 
     const editarAluno = async () => {
         if (_aluno.nome && _aluno.cursoGraduacao && _aluno.matricula && _aluno.periodoAtual && _aluno.periodosCursado) {
-            const alunoEditado = {
-                id: idAluno,
-                nome: _aluno.nome,
-                cursoGraduacao: _aluno.cursoGraduacao,
-                matricula: _aluno.matricula,
-                periodoAtual: _aluno.periodoAtual,
-                periodosCursado: _aluno.periodosCursado,
-            };
             try {
-                await setDoc(doc(db, 'Alunos', idAluno), alunoEditado);
+                await setDoc(doc(db, 'Alunos', idAluno), _aluno);
                 Alert.alert('Sucesso', 'Aluno editado com sucesso!');
                 setAluno(initialState);
                 const alunosRef = collection(db, 'Alunos');
                 const alunosSnapshot = await getDocs(alunosRef);
                 const alunosData = alunosSnapshot.docs.map((doc, index) => ({
-                    key: `${doc.id}-${index}`,
+                    id: doc.id,
                     ...doc.data()
                 }));
-                props.navigation.navigate('Alunos', { newListAlunos: alunosData })
+                props.navigation.navigate('Alunos', { newListAlunos: alunosData });
             } catch (error) {
                 console.error('Erro ao editar aluno:', error);
                 Alert.alert('Erro', 'Ocorreu um erro ao editar o aluno. Por favor, tente novamente.');
@@ -89,7 +67,6 @@ export default function CadastrarAlunos(props) {
         } else {
             Alert.alert('Erro', 'Por favor, preencha todos os campos.');
         }
-
     }
 
     return (
@@ -125,11 +102,10 @@ export default function CadastrarAlunos(props) {
                 keyboardType="numeric"
                 onChangeText={(text) => handleChange('periodosCursado', text)}
             />
-            <Button title={_aluno ? 'Salvar' : 'Cadastrar'} onPress={() => {
-                if (_aluno) {
+            <Button title={aluno ? 'Salvar' : 'Cadastrar'} onPress={() => {
+                if (aluno) {
                     editarAluno();
-                }
-                else {
+                } else {
                     handleSubmit();
                 }
             }} />
