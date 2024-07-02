@@ -9,16 +9,22 @@ const db = getFirestore(appFirebase);
 
 export default function CadastrarProjeto(props) {
     const { projeto } = props?.route?.params || {};
+    const { user } = props?.route?.params || {};
 
     const initialState = {
         nomeProjeto: '',
         curso: '',
         tema: '',
         periodoApresentacao: '',
-        notaAvaliacao: '',
+        notaAvaliacao: 0,
         grupo: [],
         disciplinas: '',
         alunosTemp: [{ nomeAluno: '', matricula: '' }],
+        avaliador:
+        {
+            nome: user?.nome,
+            email: user?.email,
+        },
     };
 
     const editState = {
@@ -29,6 +35,10 @@ export default function CadastrarProjeto(props) {
         periodoApresentacao: projeto?.periodoApresentacao || '',
         notaAvaliacao: projeto?.notaAvaliacao || '',
         grupo: projeto?.grupo || [],
+        avaliador: {
+            nome: projeto?.avaliador?.nome || '',
+            email: projeto?.avaliador?.email || '',
+        },
     };
 
     const [state, setState] = useState(projeto ? editState : initialState);
@@ -70,6 +80,10 @@ export default function CadastrarProjeto(props) {
                 periodoApresentacao: state.periodoApresentacao,
                 notaAvaliacao: state.notaAvaliacao,
                 grupo: state.alunosTemp,
+                avaliador: {
+                    nome: state.avaliador.nome || 'genericName',
+                    email: state.avaliador.email || 'genericEmail',
+                },
             };
             await addDoc(collection(db, 'Projetos Integradores'), novoProjeto);
             Alert.alert('Sucesso', 'Projeto cadastrado com sucesso!');
@@ -79,7 +93,7 @@ export default function CadastrarProjeto(props) {
             const projetosSnapshot = await getDocs(projetosRef);
             const projetos = projetosSnapshot.docs.map(doc => doc.data());
 
-            props.navigation.navigate('Projetos', { newListProjetos: projetos });
+            props.navigation.navigate('Projetos', { newListProjetos: projetos, user: user });
         } catch (error) {
             console.error('Erro ao cadastrar projeto:', error);
             Alert.alert('Erro', 'Ocorreu um erro ao cadastrar o projeto. Por favor, tente novamente.');
@@ -96,6 +110,8 @@ export default function CadastrarProjeto(props) {
                 periodoApresentacao: state.periodoApresentacao,
                 notaAvaliacao: state.notaAvaliacao,
                 grupo: state.grupo,
+                avaliador: state.avaliador,
+                
             };
             await setDoc(doc(db, 'Projetos Integradores', state.id), projetoEditado);
             Alert.alert('Sucesso', 'Projeto editado com sucesso!');
@@ -106,9 +122,7 @@ export default function CadastrarProjeto(props) {
             const projetosSnapshot = await getDocs(projetosRef);
             const projetos = projetosSnapshot.docs.map(doc => doc.data());
 
-            console.log(projetos);
-
-            props.navigation.navigate('Projetos', { newListProjetos: projetos });
+            props.navigation.navigate('Projetos', { newListProjetos: projetos, user: user });
         } catch (error) {
             console.error('Erro ao editar projeto:', error);
             Alert.alert('Erro', 'Ocorreu um erro ao editar o projeto. Por favor, tente novamente.');

@@ -27,6 +27,7 @@ export default function Projetos(props) {
     const [projetosAlunoApresentados, setProjetosAlunoApresentados] = useState([]);
 
     const [projetosAvaliados, setProjetosAvaliados] = useState([]);
+    const [projetosAvaliar, setProjetosAvaliar] = useState([]);
 
     const [loading, setLoading] = useState(true);
 
@@ -49,7 +50,8 @@ export default function Projetos(props) {
                 }
             };
             fetchAluno();
-            setProjetosAluno(projetos.filter(proj => proj.grupo.some(integrante => integrante.matricula === aluno.matricula)))
+            setProjetosAluno(projetos.filter(proj => proj.grupo.some(integrante => integrante.matricula === aluno.matricula && 
+                proj.periodoApresentacao >= aluno.periodoAtual)))
             setProjetosAlunoApresentados(projetos.filter(proj => proj.grupo.some(integrante => integrante.matricula === aluno.matricula) && proj.notaAvaliacao > 0 && proj.periodoApresentacao < aluno.periodoAtual))
         }
 
@@ -62,13 +64,15 @@ export default function Projetos(props) {
                         id: doc.id,
                         ...doc.data()
                     }));
-                    const _projetosAvaliador = _projetos.filter(projeto => projeto.avaliador.email === user.email);
+                    const _projetosAvaliar = _projetos.filter(projeto => projeto.avaliador.email === user.email && projeto.notaAvaliacao === 0);
+                    const _projetosAvaliador = _projetos.filter(projeto => projeto.avaliador.email === user.email && projeto.notaAvaliacao > 0);
 
                     if (_projetosAvaliador.length > 0) {
                         projetos = _projetosAvaliador;
                     }
                     setProjetos(_projetos);
                     setProjetosAvaliados(projetos);
+                    setProjetosAvaliar(_projetosAvaliar);
 
                 } catch (error) {
                     console.error('Erro ao buscar projetos avaliados: ', error);
@@ -91,8 +95,6 @@ export default function Projetos(props) {
             }));
             setLoading(false);
             setProjetos(projData);
-            setProjetosAluno(projData);
-            setProjetosAlunoApresentados(projData);
 
         };
         fetchProjetos();
@@ -123,7 +125,7 @@ export default function Projetos(props) {
                 curso: projeto.curso,
                 tema: projeto.tema,
                 periodoApresentacao: projeto.periodoApresentacao,
-                notaAvaliacao: nota,
+                notaAvaliacao: parseInt(nota),
                 grupo: projeto.grupo,
                 avaliador: {
                     nome: avaliador.nome,
@@ -173,7 +175,7 @@ export default function Projetos(props) {
                                 <View style={styles.cursoRow}>
                                     <Text style={styles.cursoTitle}>{projeto.nomeProjeto}</Text>
                                     <View style={styles.iconContainer}>
-                                        <TouchableOpacity onPress={() => { props.navigation.navigate('Cadastrar Projetos', { projeto: projeto }) }}>
+                                        <TouchableOpacity onPress={() => { props.navigation.navigate('Cadastrar Projetos', { projeto: projeto, user: user}) }}>
                                             <Ionicons name="edit" size={20} color="white" style={{ paddingRight: 12 }} /></TouchableOpacity>
                                         <TouchableOpacity onPress={() => { deleteProjeto(projeto) }}>
                                             <Ionicons name="trash-alt" size={20} color="white" />
@@ -186,7 +188,7 @@ export default function Projetos(props) {
                                 </View>
                                 <View style={styles.infoRow}>
                                     <Text style={styles.cursoDescription}>Período Apresentação: {projeto.periodoApresentacao}°</Text>
-                                    <Text style={styles.cursoDescription}>Nota: {projeto.notaAvaliacao} pontos</Text>
+                                    <Text style={styles.cursoDescription}>Nota: {`${projeto.notaAvaliacao}`|| ''}</Text>
                                 </View>
                                 <Text style={styles.cursoDescription}>Grupo:</Text>
                                 {projeto.grupo?.map((integrante, idx) => (
@@ -261,7 +263,7 @@ export default function Projetos(props) {
                         user?.tipo === 2 && (
                             !avaliados ? (
                                 <ScrollView contentContainerStyle={{ alignItems: 'center', justifyContent: 'center' }}>
-                                    {projetos.map((projeto, index) => (
+                                    {projetosAvaliar.map((projeto, index) => (
                                         <View key={projeto.key || index} style={styles.cursoContainer}>
                                             <View style={styles.cursoRow}>
                                                 <Text style={styles.cursoTitle}>{projeto.nomeProjeto}</Text>
@@ -359,6 +361,10 @@ export default function Projetos(props) {
                             />
                             <TouchableOpacity style={styles.buttonSave}
                                 onPress={() => {
+                                    if (!nota) {
+                                        Alert.alert('Erro', 'Por favor, informe a nota para avaliar o projeto.');
+                                        return;
+                                    }
                                     avaliaProjeto(avaliarModal.projeto, avaliarModal.avaliador, nota);
                                 }}>
                                 <Text style={styles.buttonText}>Salvar</Text>

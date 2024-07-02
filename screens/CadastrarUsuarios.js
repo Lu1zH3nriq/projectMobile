@@ -45,8 +45,11 @@ export default function CadastrarUsuario(props) {
                 nome: state.nome,
                 email: state.email,
                 pass: state.pass,
-                tipo: state.tipo,
+                tipo: parseInt(state.tipo),
             };
+
+
+            console.log(novoUser);
             await addDoc(collection(db, 'Usuários'), novoUser);
             Alert.alert('Sucesso', 'Usuário cadastrado com sucesso!');
             setState(initialState);
@@ -70,7 +73,7 @@ export default function CadastrarUsuario(props) {
                 nome: state.nome,
                 email: state.email,
                 pass: state.pass,
-                tipo: state.tipo,
+                tipo: parseInt(state.tipo),
             };
             await setDoc(doc(db, 'Usuários', user?.id), usuarioEditado);
             Alert.alert('Sucesso', 'Usuário editado com sucesso!');
